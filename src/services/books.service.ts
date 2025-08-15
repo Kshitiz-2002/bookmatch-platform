@@ -1,6 +1,6 @@
 import prisma from '../lib/prisma';
 import { getPresignedUrl, getSignedUrl } from '../utils/supabase';
-import { logger } from '../lib/logger';
+import logger from '../lib/logger';
 import { redis } from '../lib/redis';
 import type { Book, Prisma, Visibility } from '@prisma/client';
 import { HttpException } from '../errors/HttpException';

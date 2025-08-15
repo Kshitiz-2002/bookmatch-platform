@@ -1,7 +1,7 @@
 import { argon2id, hash, verify } from 'argon2';
 import prisma from '../lib/prisma';
 import { generateAccessToken, generateRefreshToken } from '../lib/jwt';
-import { logger } from '../lib/logger';
+import logger from '../lib/logger';
 import { redis } from '../lib/redis';
 import { config } from '../config/config';
 

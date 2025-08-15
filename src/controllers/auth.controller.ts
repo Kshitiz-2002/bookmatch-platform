@@ -4,7 +4,7 @@ import { logger } from '../lib/logger.js';
 import { registerSchema, loginSchema, refreshTokenSchema } from '../utils/validation.js';
 import { generateAccessToken } from '../utils/jwt.js';
 import { config } from '../config/config.js';
-import { HttpStatusCode } from '../constants/http.js';
+import HttpStatusCode from '../constants/http.js';
 
 
 export class AuthController {

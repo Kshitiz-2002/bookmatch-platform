@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { config } from '../config/config';
-import { logger } from '../lib/logger';
+import logger from '../lib/logger';
 import { HttpException } from '../errors/HttpException';
 
 const supabase = createClient(config.SUPABASE_URL, config.SUPABASE_KEY);

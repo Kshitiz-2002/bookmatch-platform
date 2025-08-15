@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { redis } from '../lib/redis';
-import { logger } from '../lib/logger';
+import logger from '../lib/logger';
 import { config } from '../config/config';
 import { HttpException } from '../errors/HttpException';
 

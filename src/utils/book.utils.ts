@@ -1,4 +1,4 @@
-import { prisma } from '../lib/prisma';
+import prisma from "../lib/prisma";
 import { ForbiddenError } from '../errors/ForbiddenError';
 
 export const validateBookAccess = async (bookId: string, userId?: string) => {

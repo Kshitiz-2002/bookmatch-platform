@@ -1,6 +1,6 @@
 import { redis } from '../lib/redis';
 import prisma from '../lib/prisma';
-import { logger } from '../lib/logger';
+import logger from '../lib/logger';
 import recsGateway from "./recs.gateway"
 
 class AnalyticsService {
