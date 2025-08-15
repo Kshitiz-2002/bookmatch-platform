@@ -1,0 +1,102 @@
+generator client {
+  provider = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  extensions = [pgcrypto]
+}
+
+model User {
+  id        String    @id @default(uuid())
+  name      String
+  email     String    @unique
+  password  String
+  roles     String[]  @default(["user"])
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  
+  books     Book[]
+  ratings   Rating[]
+  events    Event[]
+  refreshTokens RefreshToken[]
+  
+  @@map("users")
+}
+
+model Book {
+  id          String     @id @default(uuid())
+  title       String
+  authors     String[]
+  description String?
+  isbn        String?
+  categories  String[]
+  fileKey     String     @map("file_key")
+  coverKey    String?    @map("cover_key")
+  visibility  Visibility @default(PUBLIC)
+  userId      String     @map("user_id")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  deletedAt   DateTime?  @map("deleted_at")
+  
+  user        User       @relation(fields: [userId], references: [id])
+  ratings     Rating[]
+  events      Event[]
+  
+  @@index([title])
+  @@index([userId])
+  @@map("books")
+}
+
+enum Visibility {
+  PUBLIC
+  PRIVATE
+}
+
+model Rating {
+  id        String   @id @default(uuid())
+  rating    Int
+  content   String?
+  isSpoiler Boolean  @default(false) @map("is_spoiler")
+  userId    String   @map("user_id")
+  bookId    String   @map("book_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  
+  user      User     @relation(fields: [userId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id])
+  
+  @@unique([userId, bookId])
+  @@map("ratings")
+}
+
+model Event {
+  id        String   @id @default(uuid())
+  type      String
+  userId    String?  @map("user_id")
+  bookId    String   @map("book_id")
+  meta      Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  
+  user      User?    @relation(fields: [userId], references: [id])
+  book      Book     @relation(fields: [bookId], references: [id])
+  
+  @@index([bookId])
+  @@index([userId])
+  @@map("events")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String   @map("user_id")
+  revoked   Boolean  @default(false)
+  createdAt DateTime @default(now()) @map("created_at")
+  expiresAt DateTime @map("expires_at")
+  
+  user      User     @relation(fields: [userId], references: [id])
+  
+  @@map("refresh_tokens")
+}
