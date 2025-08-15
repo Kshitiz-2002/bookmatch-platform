@@ -16,6 +16,7 @@ const configSchema = z.object({
   SUPABASE_BUCKET: z.string().default('books'),
   RECS_SERVICE_URL: z.string().url().default('http://localhost:8000'),
   EVENTS_STREAM: z.string().default('book_events'),
+  NODE_ENV: z.enum(['development', 'production']).default('development'),
 });
 
 export const config = configSchema.parse(process.env);
