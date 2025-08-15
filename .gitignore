@@ -1,0 +1,27 @@
+# node
+node_modules
+dist
+coverage
+.env
+.env.*
+
+# python
+**/__pycache__/
+**/.venv/
+**/.pytest_cache/
+
+# docker
+/.docker
+/.volumes
+
+# misc
+.DS_Store
+*.log
+
+# Database
+/data
+**/.turbo
+/.turbo
+
+#secrets
+infra/secrets/*.pem
