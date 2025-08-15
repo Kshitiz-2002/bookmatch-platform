@@ -2,7 +2,7 @@ import type { Request, Response } from 'express';
 import { HttpStatusCode } from '../constants/http';
 import { logger } from '../lib/logger';
 import { analyticsService } from '../services/analytics.service';
-import { BookService } from '../services/book.service';
+import { BookService } from '../services/books.service';
 import { validateBookAccess } from '../utils/book.utils';
 
 export class BookController {
