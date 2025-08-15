@@ -1,8 +1,8 @@
 import app from './app';
+import { config } from './config/config';
+import logger from './lib/logger';
 import { prisma } from './lib/prisma';
 import { redisService } from './services/redis.service';
-import logger from './lib/logger';
-import { config } from './config/config';
 
 const PORT = config.PORT;
 
