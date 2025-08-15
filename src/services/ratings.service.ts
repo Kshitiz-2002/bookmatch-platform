@@ -1,7 +1,7 @@
 import prisma from '../lib/prisma';
 import { redis } from '../lib/redis';
 import { HttpException } from '../errors/HttpException';
-import { analyticsService } from './analytics.service';
+import analyticsService from "./analytics.service"
 
 class RatingService {
   async rateBook(bookId: string, userId: string, rating: number) {
