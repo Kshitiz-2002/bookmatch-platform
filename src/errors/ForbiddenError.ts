@@ -1,5 +1,10 @@
-import { HttpStatusCode } from '../constants/http';
+// src/errors/ForbiddenError.ts
 import { ErrorCodes } from '../constants/errors';
+
+/**
+ * HTTP Status Code for Forbidden responses
+ */
+const FORBIDDEN_STATUS_CODE = 403;
 
 /**
  * ForbiddenError - Custom error class for 403 Forbidden responses
@@ -15,7 +20,7 @@ import { ErrorCodes } from '../constants/errors';
  * 5. Log additional context for debugging
  */
 export class ForbiddenError extends Error {
-  public readonly statusCode: HttpStatusCode;
+  public readonly statusCode: number;
   public readonly code: string;
   public readonly timestamp: string;
   public readonly metadata: Record<string, unknown>;
@@ -41,10 +46,10 @@ export class ForbiddenError extends Error {
     }
     
     this.name = 'ForbiddenError';
-    this.statusCode = HttpStatusCode.FORBIDDEN;
+    this.statusCode = FORBIDDEN_STATUS_CODE;
     this.code = errorCode;
     this.timestamp = new Date().toISOString();
-    this.metadata = metadata;
+    this.metadata = { ...metadata };
     this.isOperational = true;
     
     // Add additional debug context
@@ -66,7 +71,7 @@ export class ForbiddenError extends Error {
         code: this.code,
         message: this.message,
         statusCode: this.statusCode,
-        ...(Object.keys(this.metadata).length && { metadata: this.metadata })
+        ...(Object.keys(this.metadata).length > 0 ? { metadata: this.metadata } : {})
       },
       timestamp: this.timestamp
     };
