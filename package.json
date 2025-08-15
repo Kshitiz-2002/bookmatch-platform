@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/Kshitiz-2002/bookmatch-platform#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
     "@types/node": "^24.3.0",
     "eslint": "^9.33.0",
     "nodemon": "^3.1.10",
