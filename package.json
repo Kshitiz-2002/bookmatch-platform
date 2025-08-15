@@ -9,9 +9,10 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:api": "npm --workspace=apps/api run dev",
-    "build:api": "npm --workspace=apps/api run build",
-    "start:api": "npm --workspace=apps/api run start",
+    "dev:api": "npm --workspace=@bookmatch/api run dev",
+    "build:api": "npm --workspace=@bookmatch/api run build",
+    "start:api": "npm --workspace=@bookmatch/api run start",
+    "bootstrap": "npm install",
     "lint": "eslint . --ext .ts,.js",
     "test": "echo \"No tests yet\""
   },
