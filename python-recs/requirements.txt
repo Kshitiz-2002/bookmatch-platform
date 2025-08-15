@@ -1,6 +1,0 @@
-fastapi
-uvicorn
-pandas
-scikit-surprise  # or lightfm/implicit depending on approach
-supabase
-boto3  # if uploading artifacts to storage
