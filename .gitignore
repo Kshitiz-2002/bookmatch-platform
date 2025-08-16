@@ -7,7 +7,7 @@ coverage
 
 # python
 **/__pycache__/
-**/.venv/
+/recs-service/venv/
 **/.pytest_cache/
 
 # docker
