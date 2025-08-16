@@ -8,6 +8,7 @@ coverage
 # python
 **/__pycache__/
 /recs-service/venv/
+/recs-service/artifacts/
 **/.pytest_cache/
 
 # docker
