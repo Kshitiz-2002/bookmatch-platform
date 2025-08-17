@@ -7,64 +7,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum BookVisibility {
-  public
-  private
-  unlisted
-}
-
 model User {
-  id            String         @id @default(uuid())
-  name          String
-  email         String         @unique
-  passwordHash  String
-  roles         String[]       @default(["user"])
-  createdAt     DateTime       @default(now())
-  updatedAt     DateTime       @updatedAt
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  password     String
+  roles        String[]       @default(["user"])
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
   refreshTokens RefreshToken[]
-  ratings       Rating[]
-  books         Book[]         @relation("owner_books")
-  events        Event[] // <-- relation to Event
-
-  @@index([email])
+  ratings      Rating[]
+  reviews      Review[]
+  events       Event[]
+  books        Book[]         @relation("BookOwner")
 }
 
 model RefreshToken {
   id        String   @id @default(uuid())
-  tokenHash String
   user      User     @relation(fields: [userId], references: [id])
   userId    String
+  tokenHash String
   revoked   Boolean  @default(false)
-  expiresAt DateTime
   createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([createdAt])
+  expiresAt DateTime
 }
 
 model Book {
-  id          String         @id @default(uuid())
+  id          String    @id @default(uuid())
   title       String
+  authors     String[]
   description String?
-  isbn        String?        @unique
-  authors     String[] // e.g. ["Author A","Author B"]
-  categories  String[] // text[]
-  fileKey     String? // storage object key / path
+  isbn        String?   @unique
+  categories  String[]
+  fileKey     String
   coverKey    String?
-  visibility  BookVisibility @default(public)
-  owner       User?          @relation("owner_books", fields: [ownerId], references: [id])
-  ownerId     String?
-  avgRating   Float          @default(0)
-  ratingCount Int            @default(0)
-  deleted     Boolean        @default(false)
-  createdAt   DateTime       @default(now())
-  updatedAt   DateTime       @updatedAt
+  visibility  String    @default("public")
+  ownerId     String
+  owner       User      @relation("BookOwner", fields: [ownerId], references: [id])
+  avgRating   Float     @default(0.0)
+  ratingCount Int       @default(0)
+  deleted     Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
   ratings     Rating[]
-  events      Event[] // <-- relation to Event
-
-  @@index([ownerId])
-  @@index([createdAt])
-  @@index([title])
+  reviews     Review[]
 }
 
 model Rating {
@@ -78,38 +64,44 @@ model Rating {
   updatedAt DateTime @updatedAt
 
   @@unique([userId, bookId])
-  @@index([bookId])
-  @@index([userId])
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    String
+  content   String
+  isSpoiler Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model Event {
-  id String @id @default(uuid())
-
-  // optional relation to User (anonymous events possible)
-  user   User?   @relation(fields: [userId], references: [id])
-  userId String?
-
-  // optional relation to Book (events may or may not reference a book)
-  book   Book?   @relation(fields: [bookId], references: [id])
-  bookId String?
-
-  eventType String
+  id        String   @id @default(uuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  bookId    String?
+  event     String
   meta      Json?
   createdAt DateTime @default(now())
-
-  @@index([userId])
-  @@index([bookId])
-  @@index([eventType])
 }
 
-model ModelArtifact {
+model Recommendation {
   id        String   @id @default(uuid())
-  name      String
-  version   String
-  metrics   Json?
-  path      String // file path or storage key
+  userId    String
+  items     Json
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ttl       DateTime
+}
 
-  @@index([name])
-  @@index([createdAt])
+model ModelJob {
+  id        String   @id @default(uuid())
+  kind      String
+  status    String   @default("pending")
+  metrics   Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
