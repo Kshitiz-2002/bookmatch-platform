@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import * as booksService from "../services/books.service";
+import * as booksService from "../services/book.service";
 import prisma from "../lib/prismaClient";
 
 /**
