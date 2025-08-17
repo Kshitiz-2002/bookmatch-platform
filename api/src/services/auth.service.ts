@@ -2,14 +2,32 @@ import prisma from "../prisma/client";
 import jwt from "jsonwebtoken";
 import { createRefreshRaw, verifyRefreshRaw } from "./token.service";
 
-const JWT_SECRET = process.env.JWT_SECRET || "";
 const ACCESS_EXPIRES = process.env.JWT_ACCESS_EXPIRES || "15m";
 const REFRESH_EXPIRES_DAYS = Number(process.env.JWT_REFRESH_EXPIRES_DAYS || 30);
 
-function createAccessToken(userId: string, roles: string[]) {
-  return jwt.sign({ roles }, JWT_SECRET, { subject: userId, expiresIn: ACCESS_EXPIRES });
+if (!process.env.JWT_SECRET) {
+  throw new Error("JWT_SECRET environment variable is required");
+}
+const JWT_SECRET: string = process.env.JWT_SECRET; // now definitely string
+
+const DEFAULT_ACCESS_EXPIRES = "15m";
+
+function getAccessExpires(): jwt.SignOptions["expiresIn"] {
+  const raw = process.env.JWT_ACCESS_EXPIRES ?? DEFAULT_ACCESS_EXPIRES;
+  if (/^\d+$/.test(raw)) {
+    return Number(raw);
+  }
+  return raw as jwt.SignOptions["expiresIn"];
 }
 
+export function createAccessToken(userId: string, roles: string[] = ["user"]) {
+  const options: jwt.SignOptions = {
+    subject: userId,
+    expiresIn: getAccessExpires()
+  };
+  const payload = { roles };
+  return jwt.sign(payload, JWT_SECRET, options); // no TS errors now
+}
 function computeExpiryDate(days: number) {
   return new Date(Date.now() + days * 24 * 60 * 60 * 1000);
 }
