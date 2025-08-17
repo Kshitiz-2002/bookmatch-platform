@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { requireAuth, requireRole } from "../../middleware/jwt.middleware";
+import { requireAuth, requireRole } from "../../middlewares/auth.middleware";
 import * as RecsController from "../../controllers/recs.controller";
 
 const router = Router();
