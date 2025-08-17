@@ -6,9 +6,9 @@ import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import { collectDefaultMetrics, register as promRegister, Counter } from "prom-client";
 
-import authRoutes from "./routes/v1/auth.routes";
-import usersRoutes from "./routes/v1/users.routes";
-import booksRoutes from "./routes/v1/books.routes";
+import authRoutes from "./routes/auth.routes";
+import usersRoutes from "./routes/users.routes";
+import booksRoutes from "./routes/books.routes";
 import ratingsRoutes from "./routes/v1/ratings.routes";
 import recsRoutes from "./routes/v1/recs.gateway.routes";
 
