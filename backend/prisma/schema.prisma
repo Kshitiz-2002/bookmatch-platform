@@ -1,0 +1,101 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id            Int           @id @default(autoincrement())
+  email         String        @unique
+  name          String?
+  password      String
+  role          String?
+  createdAt     DateTime      @default(now())
+  UserBooks     UserBook[]
+  ratings       Rating[]
+  books         Book[]        @relation("UploadedBooks")
+  refreshTokens RefreshToken[]
+}
+
+model Book {
+  id           Int         @id @default(autoincrement())
+  title        String
+  description  String?     @db.Text
+  author       String?
+  isbn         String?     @unique
+  filePath     String
+  coverPath    String?
+  isPublic     Boolean     @default(true)
+  uploadedBy   User?       @relation("UploadedBooks", fields: [uploadedById], references: [id])
+  uploadedById Int?
+  createdAt    DateTime    @default(now())
+  metadata     Json?
+  ratings      Rating[]
+  genres       BookGenre[]
+  userBooks    UserBook[]  
+  embedding    Embedding?  
+}
+
+model UserBook {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  book      Book     @relation(fields: [bookId], references: [id])
+  bookId    Int
+  status    String
+  createdAt DateTime @default(now())
+
+  @@unique([userId, bookId]) 
+}
+
+model Embedding {
+  id        Int       @id @default(autoincrement())
+  vector    Float[]   
+  createdAt DateTime  @default(now())
+  book      Book      @relation(fields: [bookId], references: [id])
+  bookId    Int       @unique   
+}
+
+
+model Genre {
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  books BookGenre[]
+}
+
+model BookGenre {
+  id      Int   @id @default(autoincrement())
+  book    Book  @relation(fields: [bookId], references: [id])
+  bookId  Int
+  genre   Genre @relation(fields: [genreId], references: [id])
+  genreId Int
+
+  @@unique([bookId, genreId])
+}
+
+
+model Rating {
+  id Int @id @default(autoincrement())
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+  book   Book @relation(fields: [bookId], references: [id])
+  bookId Int
+  score  Int
+  review String?
+  createdAt DateTime @default(now())
+  @@unique([userId, bookId])
+}
+
+
+
+model RefreshToken {
+  id        Int      @id @default(autoincrement())
+  token     String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  revoked   Boolean  @default(false)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
