@@ -25,27 +25,10 @@ export default function buildApp(): FastifyInstance {
 
   // Register CORS BEFORE routes & other plugins that rely on preHandlers
   app.register(cors, {
-    origin: (origin, cb) => {
-      if (!origin) return cb(null, true); // allow non-browser clients
-
-      try {
-        const reqOrigin = new URL(origin).origin; // normalize protocol+host
-        if (allowedOriginsEnv.includes(reqOrigin)) {
-          return cb(null, true);
-        }
-      } catch {
-        // ignore parse errors
-      }
-
-      // allow localhost in dev
-      if (process.env.NODE_ENV !== "production") {
-        return cb(null, true);
-      }
-
-      return cb(new Error("Not allowed by CORS"), false);
-    },
+    origin: true, // reflect any origin
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    credentials: true, // only if you actually need cookies/sessions
   });
 
   // JWT plugin (register before auth middleware so req.jwtVerify() is available)
