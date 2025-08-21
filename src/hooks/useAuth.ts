@@ -1,10 +1,6 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { authAPI, removeAuthToken, getAuthToken } from "@/lib/api";
 import { User } from "@/types";
-import dotenv from 'dotenv';
-dotenv.config();
-
-const API_BASE_URL = process.env.API_BASE_URL;
 
 interface AuthContextType {
   user: User | null;
@@ -46,7 +42,7 @@ export const useAuthProvider = () => {
 
   const fetchUser = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/users/me`, {
+      const response = await fetch(`https://bookmatch-platform.onrender.com/users/me`, {
         headers: { Authorization: `Bearer ${getAuthToken()}` },
       });
       if (response.ok) {

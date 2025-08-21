@@ -1,9 +1,6 @@
 // API configuration and utilities for the Bookshelf application
 // This file will contain the base API setup and common utilities
-import dotenv from 'dotenv';
-dotenv.config();
-
-const API_BASE_URL = process.env.API_BASE_URL;
+const API_BASE_URL = "https://bookmatch-platform.onrender.com"
 
 // Auth token management
 export const getAuthToken = (): string | null => {
