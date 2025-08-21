@@ -1,11 +1,10 @@
 import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../lib/db';
+import type { RefreshToken } from '@prisma/client';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'dev';
-// Access token lifetime (keep short-ish). We'll use 7 days for access token.
 const ACCESS_EXPIRES = '7d';
-// Refresh token lifetime in days (you asked "after 10 days or so")
 const REFRESH_EXPIRES_DAYS = 10;
 
 export function generateAccessToken(userId: number) {
@@ -21,7 +20,11 @@ export async function createRefreshToken(userId: number) {
   return record;
 }
 
-export async function verifyRefreshToken(token: string) {
+export type VerifyRefreshResult =
+  | { ok: false; reason: 'not_found' | 'revoked' | 'expired' }
+  | { ok: true; record: RefreshToken };
+
+export async function verifyRefreshToken(token: string): Promise<VerifyRefreshResult> {
   const record = await prisma.refreshToken.findUnique({ where: { token } });
   if (!record) return { ok: false, reason: 'not_found' };
   if (record.revoked) return { ok: false, reason: 'revoked' };
@@ -29,16 +32,25 @@ export async function verifyRefreshToken(token: string) {
   return { ok: true, record };
 }
 
-// Rotate: mark old token revoked and create a new one
-export async function rotateRefreshToken(oldToken: string) {
+export type RotateRefreshResult =
+  | { ok: false; reason?: string }
+  | { ok: true; newToken: RefreshToken };
+
+export async function rotateRefreshToken(oldToken: string): Promise<RotateRefreshResult> {
   const v = await verifyRefreshToken(oldToken);
   if (!v.ok) return { ok: false, reason: v.reason };
 
-  // revoke old
+  // revoke old token
   await prisma.refreshToken.update({ where: { token: oldToken }, data: { revoked: true } });
 
-  // create new
-  const newRec = await createRefreshToken(v.record.userId);
+  // create and return new token
+  const token = crypto.randomBytes(48).toString('hex');
+  const expiresAt = new Date(Date.now() + REFRESH_EXPIRES_DAYS * 24 * 60 * 60 * 1000);
+
+  const newRec = await prisma.refreshToken.create({
+    data: { token, userId: v.record.userId, expiresAt }
+  });
+
   return { ok: true, newToken: newRec };
 }
 

@@ -181,8 +181,8 @@ export async function createBookHandler(req: FastifyRequest, reply: FastifyReply
       if (emb && emb.length) {
         await prisma.embedding.create({ data: { vector: emb, bookId: created.id }});
       }
-    } catch (e) {
-      req.log.warn('embedding failed', e);
+    } catch (e: unknown) {
+      req.log.warn('embedding failed', e as any);
     }
 
     return reply.code(201).send({ book: created });
@@ -343,8 +343,8 @@ export async function deleteBookHandler(req: FastifyRequest, reply: FastifyReply
     if (book.filePath && fs.existsSync(book.filePath)) {
       fs.unlinkSync(book.filePath);
     }
-  } catch (e) {
-    req.log.warn('file delete failed', e);
+  } catch (e: unknown) {
+    req.log.warn('file delete failed', e as any);
   }
 
   return reply.send({ ok: true });

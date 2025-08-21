@@ -12,8 +12,8 @@ const start = async () => {
     // test DB connection at startup (optional, helpful)
     await prisma.$connect();
     app.log.info('Prisma connected to DB');
-  } catch (e) {
-    app.log.error('Prisma failed to connect at startup:', e);
+  } catch (e: unknown) {
+    app.log.error('Prisma failed to connect at startup:', e as any);
   }
 
   try {
