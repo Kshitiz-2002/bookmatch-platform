@@ -1,7 +1,9 @@
 // API configuration and utilities for the Bookshelf application
 // This file will contain the base API setup and common utilities
+import dotenv from 'dotenv';
+dotenv.config();
 
-const API_BASE_URL = 'http://localhost:4000';
+const API_BASE_URL = process.env.API_BASE_URL;
 
 // Auth token management
 export const getAuthToken = (): string | null => {
