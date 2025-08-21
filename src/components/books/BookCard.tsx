@@ -2,6 +2,7 @@ import { Star, Download, User, Calendar, BookOpen, Eye } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
 
 interface BookCardProps {
   book: {
@@ -27,6 +28,10 @@ const BookCard = ({ book, onViewDetails, onDownload }: BookCardProps) => {
       day: "numeric",
       year: "numeric",
     });
+  };
+  const navigate = useNavigate();
+  const handleReadBook = (id: number) => {
+    navigate(`/read/${id}`);
   };
 
   const renderStars = (rating: number) => {
@@ -70,10 +75,7 @@ const BookCard = ({ book, onViewDetails, onDownload }: BookCardProps) => {
               <Button
                 size="sm"
                 variant="secondary"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  window.open(`/read/${book.id}`, "_blank");
-                }}
+                onClick={() => handleReadBook(book.id)}
               >
                 <BookOpen className="h-4 w-4 mr-1" />
                 Read
